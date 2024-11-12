@@ -1,0 +1,161 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Node structure to represent each book
+struct Book {
+    int id;
+    string title;
+    string author;
+    int year;
+    Book* next;
+};
+
+// Class for Library Management System
+class Library {
+private:
+    Book* head;
+
+public:
+    Library() : head(nullptr) {}
+
+    // Function to add a book to the library
+    void addBook(int id, string title, string author, int year) {
+        Book* newBook = new Book();
+        newBook->id = id;
+        newBook->title = title;
+        newBook->author = author;
+        newBook->year = year;
+        newBook->next = head;
+        head = newBook;
+        cout << "Book added successfully!" << endl;
+    }
+
+    // Function to delete a book by its ID
+    void deleteBook(int id) {
+        Book* temp = head;
+        Book* prev = nullptr;
+
+        // Check if the head node is the book to be deleted
+        if (temp != nullptr && temp->id == id) {
+            head = temp->next;
+            delete temp;
+            cout << "Book deleted successfully!" << endl;
+            return;
+        }
+
+        // Search for the book to be deleted
+        while (temp != nullptr && temp->id != id) {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        // If the book was not found
+        if (temp == nullptr) {
+            cout << "Book not found!" << endl;
+            return;
+        }
+
+        // Unlink the node from the linked list
+        prev->next = temp->next;
+        delete temp;
+        cout << "Book deleted successfully!" << endl;
+    }
+
+    // Function to search for a book by its ID
+    void searchBook(int id) {
+        Book* temp = head;
+
+        while (temp != nullptr) {
+            if (temp->id == id) {
+                cout << "Book ID: " << temp->id << endl;
+                cout << "Title: " << temp->title << endl;
+                cout << "Author: " << temp->author << endl;
+                cout << "Publication Year: " << temp->year << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Book not found!" << endl;
+    }
+
+    // Function to display all books
+    void displayBooks() {
+        if (head == nullptr) {
+            cout << "No books in the library." << endl;
+            return;
+        }
+
+        Book* temp = head;
+        cout << "Library Books:" << endl;
+        while (temp != nullptr) {
+            cout << "Book ID: " << temp->id << ", Title: " << temp->title
+                 << ", Author: " << temp->author << ", Year: " << temp->year << endl;
+            temp = temp->next;
+        }
+    }
+
+    // Destructor to free memory
+    ~Library() {
+        while (head != nullptr) {
+            Book* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+// Main function
+int main() {
+    Library library;
+    int choice, id, year;
+    string title, author;
+
+    do {
+        cout << "\nLibrary Management System\n";
+        cout << "1. Add Book\n2. Delete Book\n3. Search Book\n4. Display Books\n5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter Book ID: ";
+                cin >> id;
+                cin.ignore();
+                cout << "Enter Title: ";
+                getline(cin, title);
+                cout << "Enter Author: ";
+                getline(cin, author);
+                cout << "Enter Publication Year: ";
+                cin >> year;
+                library.addBook(id, title, author, year);
+                break;
+
+            case 2:
+                cout << "Enter Book ID to delete: ";
+                cin >> id;
+                library.deleteBook(id);
+                break;
+
+            case 3:
+                cout << "Enter Book ID to search: ";
+                cin >> id;
+                library.searchBook(id);
+                break;
+
+            case 4:
+                library.displayBooks();
+                break;
+
+            case 5:
+                cout << "Exiting system..." << endl;
+                break;
+
+            default:
+                cout << "Invalid choice. Try again!" << endl;
+                break;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
